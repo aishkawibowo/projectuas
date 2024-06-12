@@ -1,29 +1,16 @@
-// src/App.js
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import ItemList from './ItemList';
 import './App.css';
 
-function App() {
-  const [news, setNews] = useState([]);
-
-  useEffect(() => {
-    fetch('http://localhost:3000/news')
-      .then(response => response.json())
-      .then(data => setNews(data));
-  }, []);
-
+const App = () => {
   return (
-    <div className="App">
-      <h1>Daftar Berita</h1>
-      {news.map((item, index) => (
-        <div key={index} className="news-item">
-          <h2>{item.title}</h2>
-          <p><strong>Kategori:</strong> {item.category}</p>
-          <p>{item.summary}</p>
-          <p><strong>Keywords:</strong> {item.keywords.join(', ')}</p>
-        </div>
-      ))}
+    <div className="App-header"> 
+      <h1>Daftar Berita Terkini di Indonesia</h1>
+      <div className="ItemListContainer">
+        <ItemList />
+      </div>
     </div>
   );
-}
+};
 
 export default App;
