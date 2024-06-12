@@ -1,27 +1,46 @@
-// index.js
 const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 3000;
+const bodyParser = require('body-parser');
+const path = require('path'); // Import path module
+const mysql = require('mysql');
+const cors = require('cors');
 
-const news = [
-  {
-    title: 'Berita 1',
-    category: 'Kategori 1',
-    summary: 'Ringkasan Berita 1',
-    keywords: ['keyword1', 'keyword2']
-  },
-  {
-    title: 'Berita 2',
-    category: 'Kategori 2',
-    summary: 'Ringkasan Berita 2',
-    keywords: ['keyword3', 'keyword4']
-  }
-];
-
-app.get('/news', (req, res) => {
-  res.json(news);
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'beritadb'
 });
 
+const app = express();
+
+// Middleware
+app.use(cors()); // Tambahkan middleware CORS di sini
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public'))); // Serve static files from the 'public' directory
+
+// Import routes
+const beritalist = require('./routes/server');
+app.use('/beritalist', beritalist);
+
+// Middleware to handle favicon requests
+app.get('/favicon.ico', (req, res) => {
+    res.status(204).end(); // No content response for favicon.ico
+});
+
+// Middleware to handle root endpoint
+app.get('/', (req, res) => {
+  const sql = 'SELECT * FROM beritalist';
+  db.query(sql, (err, results) => {
+      if (err) {
+          res.status(500).json({ error: 'Internal Server Error' });
+          return;
+      }
+      res.json(results);
+  });
+});
+
+// Start the server
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
