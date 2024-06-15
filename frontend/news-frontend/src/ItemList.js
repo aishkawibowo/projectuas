@@ -7,35 +7,27 @@ const ItemList = () => {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const url = 'http://localhost:5000';
+        const response = await axios.get(url);
+        setItems(response.data);
+      } catch (error) {
+        console.error('Error fetching items', error);
+      }
+    };
+
     fetchItems();
   }, []);
 
-  const fetchItems = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000');
-      setItems(response.data);
-    } catch (error) {
-      console.error('Error fetching items', error);
-    }
-  };
-
   return (
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Category</th>
-            <th>Summary</th>
-            <th>Keywords</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map(item => (
-            <Item key={item.id} item={item} />
-          ))}
-        </tbody>
-      </table>
+    <div className="ItemListContainer">
+      <h2>List Berita</h2>
+      <div className="ItemList">
+        {items.map(item => (
+          <Item key={item.id} item={item} />
+        ))}
+      </div>
     </div>
   );
 };
